@@ -1,25 +1,28 @@
+import { sanitizeHtml, sanitizeUrl } from './sanitize';
+
 const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json';
 
 /**
  * Extract the main image from an article.
  * Priority: thumbnail from API > enclosure image > first <img> in content.
+ * All URLs are validated to use http/https.
  */
 export const extractImage = (item) => {
   // 1. Thumbnail provided by rss2json
-  if (item.thumbnail) return item.thumbnail;
+  if (item.thumbnail) return sanitizeUrl(item.thumbnail);
 
   // 2. Enclosure with image type
   if (
     item.enclosure?.link &&
     item.enclosure?.type?.startsWith('image')
   ) {
-    return item.enclosure.link;
+    return sanitizeUrl(item.enclosure.link);
   }
 
   // 3. First <img> in content HTML
   const content = item.content || item.description || '';
   const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (imgMatch?.[1]) return imgMatch[1];
+  if (imgMatch?.[1]) return sanitizeUrl(imgMatch[1]);
 
   return null;
 };
@@ -70,10 +73,10 @@ export const parseFeed = async (feedUrl) => {
   return (data.items || []).map((item, index) => ({
     id: `${feedUrl}::${index}::${item.link || item.guid || index}`,
     title: item.title || 'Untitled',
-    link: item.link || item.guid || '',
+    link: sanitizeUrl(item.link || item.guid || '') || '',
     author: item.author || 'Unknown',
     pubDate: item.pubDate || '',
-    content: item.content || item.description || '',
+    content: sanitizeHtml(item.content || item.description || ''),
     excerpt: extractExcerpt(item),
     image: extractImage(item),
     feedSource: feedTitle,

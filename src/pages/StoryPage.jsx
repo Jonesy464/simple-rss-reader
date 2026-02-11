@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import BookmarkButton from '../components/BookmarkButton';
 import SocialButtons from '../components/SocialButtons';
+import { sanitizeHtml } from '../utils/sanitize';
 
 function StoryPage() {
   const { storyId } = useParams();
@@ -120,10 +121,26 @@ function StoryPage() {
           </div>
         )}
 
-        <div
-          className="story-body"
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+        {article.content ? (
+          <div
+            className="story-body"
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
+          />
+        ) : article.excerpt ? (
+          <div className="story-body">
+            <p>{article.excerpt}</p>
+            <p style={{ marginTop: '1rem' }}>
+              <a
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                Read full article
+              </a>
+            </p>
+          </div>
+        ) : null}
 
         {article.categories && article.categories.length > 0 && (
           <div className="story-tags">

@@ -37,7 +37,8 @@ const bookmarksSlice = createSlice({
           link: article.link,
           author: article.author,
           pubDate: article.pubDate,
-          content: article.content,
+          // Store only the excerpt for localStorage size/safety; full content
+          // is retrieved from the feed when viewing. The excerpt is plain text.
           excerpt: article.excerpt,
           image: article.image,
           feedSource: article.feedSource,

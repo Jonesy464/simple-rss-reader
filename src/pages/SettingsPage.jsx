@@ -24,7 +24,11 @@ function SettingsPage() {
     }
 
     try {
-      new URL(newFeedUrl);
+      const parsed = new URL(newFeedUrl);
+      if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+        setError('Feed URL must use http:// or https://.');
+        return;
+      }
     } catch {
       setError('Please enter a valid URL.');
       return;
