@@ -4,7 +4,7 @@ const STORAGE_KEY = 'rss-reader-settings';
 
 const DEFAULT_FEEDS = [
   { name: 'Backchannel', url: 'https://medium.com/feed/backchannel' },
-  { name: 'TechCrunch Startups', url: 'https://techcrunch.com/startups/feed/' },
+  { name: 'TechCrunch', url: 'https://techcrunch.com/feed/' },
   { name: 'The Economist', url: 'https://medium.com/feed/the-economist' },
 ];
 

@@ -53,6 +53,50 @@ function StoryPage() {
     );
   }
 
+  // Detect whether the feed provided full article content or just a short excerpt.
+  // If content is very short (under 300 chars of plain text), treat it as excerpt-only.
+  const isFullContent = (() => {
+    if (!article.content) return false;
+    const plainText = article.content.replace(/<[^>]*>/g, '').trim();
+    return plainText.length > 300;
+  })();
+
+  const renderStoryBody = (art) => {
+    const readFullLink = (
+      <div className="story-read-full">
+        <p>This feed only provides a summary. Read the full article on the original site.</p>
+        <a
+          href={art.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn"
+        >
+          Read full article on {art.feedSource} &rarr;
+        </a>
+      </div>
+    );
+
+    if (isFullContent) {
+      return (
+        <div
+          className="story-body"
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(art.content) }}
+        />
+      );
+    }
+
+    // Short / excerpt-only content
+    return (
+      <div className="story-body">
+        {art.content && (
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(art.content) }} />
+        )}
+        {!art.content && art.excerpt && <p>{art.excerpt}</p>}
+        {readFullLink}
+      </div>
+    );
+  };
+
   const formattedDate = article.pubDate
     ? new Date(article.pubDate).toLocaleDateString('en-US', {
         weekday: 'long',
@@ -121,26 +165,7 @@ function StoryPage() {
           </div>
         )}
 
-        {article.content ? (
-          <div
-            className="story-body"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
-          />
-        ) : article.excerpt ? (
-          <div className="story-body">
-            <p>{article.excerpt}</p>
-            <p style={{ marginTop: '1rem' }}>
-              <a
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-              >
-                Read full article
-              </a>
-            </p>
-          </div>
-        ) : null}
+        {renderStoryBody(article)}
 
         {article.categories && article.categories.length > 0 && (
           <div className="story-tags">
