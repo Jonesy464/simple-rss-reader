@@ -102,7 +102,7 @@ The app works fully without auth configured — the sign-in option simply won't 
 | Feed | URL |
 |------|-----|
 | Backchannel | https://medium.com/feed/backchannel |
-| TechCrunch Startups | https://techcrunch.com/startups/feed/ |
+| TechCrunch | https://techcrunch.com/feed/ |
 | The Economist | https://medium.com/feed/the-economist |
 
 You can add, remove, or reset feeds in the Settings page.
